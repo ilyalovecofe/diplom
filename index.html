@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CARBERRIES - Продажа Б/У авто</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #212529;
+      --text-light: #6c757d;
+      --accent: #2c3e50;
+      --accent-hover: #1a252f;
+      --secondary: #e9ecef;
+      --border: #dee2e6;
+      --card-bg: #fff;
+      --error: #e74c3c;
+      --success: #2ecc71;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .header {
+      background-color: var(--accent);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-info a, .auth-info button {
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      margin-left: 1rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .auth-info a:hover, .auth-info button:hover {
+      opacity: 0.9;
+    }
+
+    .auth-info span {
+      margin: 0 0.5rem;
+      opacity: 0.7;
+    }
+
+    .cart-info {
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+      gap: 0.5rem;
+    }
+
+    .cart-info button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .cart-info button:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .btn-add-listing {
+      background-color: #27ae60;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-left: auto;
+    }
+
+    .btn-add-listing:hover {
+      background-color: #1e8449;
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      font-weight: 500;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .filters label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.875rem;
+      gap: 0.5rem;
+      color: var(--text-light);
+    }
+
+    .filters input, .filters select {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #fff;
+      min-width: 150px;
+    }
+
+    .reset-filters {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: auto;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      align-self: flex-end;
+    }
+
+    .reset-filters:hover {
+      background: var(--secondary);
+    }
+
+    #carList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 0 auto;
+    }
+
+    .car-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .car-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .car-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .car-item h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .car-item p {
+      margin: 0.25rem 0;
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    .car-item .price {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0.5rem 0;
+    }
+
+    .add-to-cart-btn {
+      margin-top: 1rem;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .car-info {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 0.25rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="email"], input[type="password"], input[type="text"], input[type="number"], select, textarea {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .auth-button {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .auth-button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .toggle-form {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+    }
+
+    .toggle-form a {
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      min-height: 1.5em;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-light);
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+
+      .filters {
+        flex-direction: column;
+      }
+
+      .reset-filters {
+        align-self: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-info span {
+        display: none;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+        margin: 0 1rem;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <h1>CARBERRIES</h1>
+        <button class="btn-add-listing" onclick="openAddModal()">Добавить объявление</button>
+        <div class="auth-info" id="authInfo">
+            <a href="#" onclick="showAuthModal('login')">Вход</a>
+            <span>|</span>
+            <a href="#" onclick="showAuthModal('register')">Регистрация</a>
+        </div>
+        <div class="cart-info">
+            <span id="cartCount">Корзина: 0 товаров</span>
+            <a href="cart.html"><button>Перейти</button></a>
+        </div>
+    </header>
+
+    <div class="content">
+        <h2>Добро пожаловать на сайт по продаже Б/У автомобилей</h2>
+        <h3>Доступные автомобили</h3>
+        
+        <div class="filters">
+            <label>
+                Марка:
+                <select id="filterBrand" onchange="applyFilters()">
+                    <option value="">Все марки</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Ford">Ford</option>
+                    <option value="Mazda">Mazda</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Kia">Kia</option>
+                    <option value="Skoda">Skoda</option>
+                    <option value="Nissan">Nissan</option>
+                    <option value="Renault">Renault</option>
+                    <option value="Subaru">Subaru</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="Chevrolet">Chevrolet</option>
+                    <option value="Peugeot">Peugeot</option>
+                </select>
+            </label>
+
+            <label>
+                Год от:
+                <input type="number" id="filterYear" placeholder="Год выпуска" onchange="applyFilters()"/>
+            </label>
+
+            <label>
+                Пробег до (км):
+                <input type="number" id="filterMileage" placeholder="Пробег" onchange="applyFilters()"/>
+            </label>
+
+            <label>
+                Владельцев до:
+                <input type="number" id="filterOwners" placeholder="Владельцы" onchange="applyFilters()"/>
+            </label>
+
+            <button class="reset-filters" onclick="resetFilters()">Сбросить</button>
+        </div>
+
+        <div id="carList"></div>
+    </div>
+
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+
+            <div id="loginForm">
+                <h2>Вход</h2>
+                <form onsubmit="return login(event)">
+                    <input type="email" id="loginEmail" placeholder="Email" required />
+                    <input type="password" id="loginPassword" placeholder="Пароль" required />
+                    <button type="submit" class="auth-button">Войти</button>
+                </form>
+                <div class="toggle-form">
+                    Нет аккаунта? <a onclick="showRegisterForm()">Зарегистрироваться</a>
+                </div>
+            </div>
+
+            <div id="registerForm" style="display:none;">
+                <h2>Регистрация</h2>
+                <form onsubmit="return register(event)">
+                    <input type="email" id="registerEmail" placeholder="Email" required />
+                    <input type="password" id="registerPassword" placeholder="Пароль (минимум 6 символов)" required minlength="6" />
+                    <button type="submit" class="auth-button">Зарегистрироваться</button>
+                </form>
+                <div class="toggle-form">
+                    Уже есть аккаунт? <a onclick="showLoginForm()">Войти</a>
+                </div>
+            </div>
+
+            <div class="message" id="message"></div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        <h2>Редактировать автомобиль</h2>
+        <form onsubmit="return saveCarEdit(event)">
+          <input type="hidden" id="editId" />
+          <input type="text" id="editName" placeholder="Название" required />
+          <input type="number" id="editPrice" placeholder="Цена" required />
+          <input type="text" id="editImage" placeholder="Ссылка на изображение" required />
+          <input type="number" id="editYear" placeholder="Год выпуска" required />
+          <input type="text" id="editMileage" placeholder="Пробег" required />
+          <input type="number" id="editOwners" placeholder="Владельцы" required />
+          <input type="text" id="editAccidents" placeholder="ДТП" required />
+          <input type="text" id="editComment" placeholder="Комментарий" />
+          <button type="submit" class="auth-button">Сохранить</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="addModal" class="modal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeAddModal()">&times;</button>
+        <h2>Добавить объявление</h2>
+        <form onsubmit="return addNewCar(event)">
+          <input type="text" id="addName" placeholder="Название автомобиля" required />
+          <input type="text" id="addImage" placeholder="Ссылка на изображение" required />
+          <input type="number" id="addYear" placeholder="Год выпуска" required />
+          <input type="text" id="addMileage" placeholder="Пробег" required />
+          <input type="number" id="addOwners" placeholder="Количество владельцев" required />
+          <select id="addAccidents" required>
+            <option value="">Были ли ДТП?</option>
+            <option value="Нет">Нет</option>
+            <option value="Да">Да</option>
+          </select>
+          <input type="number" id="addPrice" placeholder="Цена (₽)" required />
+          <textarea id="addComment" placeholder="Комментарий продавца" rows="3"></textarea>
+          <button type="submit" class="auth-button">Добавить</button>
+        </form>
+      </div>
+    </div>
+
+<script>
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let cars = JSON.parse(localStorage.getItem('cars'));
+  if (!cars) {
+    cars = [
+      { id: 1, name:'Toyota Corolla', price:500000, image:'https://www.kolesa.ru/uploads/bnnews/2014/09/04/8962995888d7dd8e81d92d5469b6e752.jpg', year: 2018, mileage: '30,000 км', owners: 1, accidents: 'Нет', comment: 'Отличное состояние!' },
+      { id: 2, name:'Honda Civic', price:600000, image:'https://upload.wikimedia.org/wikipedia/commons/9/91/96-98_Honda_Civic_LX_sedan.jpg', year: 2017, mileage: '25,000 км', owners: 1, accidents: 'Нет', comment: 'Новый автомобиль!' },
+      { id: 3, name:'Ford Focus', price:450000, image:'https://bluesky-cogcms-fordprod.cdn.imgeng.in/media/wslpcbve/focus.jpg', year: 2016, mileage: '40,000 км', owners: 2, accidents: 'Да', comment: 'Небольшие повреждения.' },
+      { id: 4, name:'Mazda 3', price:520000, image:'https://rdm-import.ru/image/product/39658/DSC_6419.jpg', year: 2019, mileage: '20,000 км', owners: 1, accidents: 'Нет', comment: 'Как новый!' },
+      { id: 5, name:'Volkswagen Golf', price:550000, image:'https://img.pxst.ru/eDJrS3lDU01ONFlBVldBMU9yTDNaWUtvbm80PS9maXQtaW4vOTQweDcwNS9maWx0ZXJzOmZvcm1hdCh3ZWJwKS8jczMtaW1hZ2VzL2l0ZW1zLzdjYy9mZTRjYzU0ZWEvZDRlZmE0YzdhNDY0LmpwZz9naz01Mg', year: 2020, mileage: '15,000 км', owners: 1, accidents: 'Нет', comment: 'Прекрасный выбор!' },
+      { id: 6, name:'Hyundai Elantra', price:480000, image:'https://tradein-kuntsevo.ru/upload/resize_cache/webp/resize_cache/iblock/256/vmwr698ejgrv48azynjb0tymh6exviib/720_540_1/7d31922f-9d0f-4bce-a0ad-a3eeebfd196a.webp', year: 2021, mileage: '10,000 км', owners: 1, accidents: 'Нет', comment: 'Гарантия до 2024 года!' },
+      { id: 7, name:'Kia Rio', price:470000, image:'https://iat.ru/uploads/origin/models/728755/1.webp', year: 2018, mileage: '35,000 км', owners: 1, accidents: 'Нет', comment: 'Экономичный и надежный.' },
+      { id: 8, name:'Skoda Octavia', price:530000, image:'https://aurum-motors.ru/wp-content/uploads/elementor/thumbs/Skoda-Octavia-2024-qil9d9wmlsnh8ukfvsc0wztuhizj40d70j5m0hm5j4.jpg', year: 2024, mileage: '5,000 км', owners: 1, accidents: 'Нет', comment: 'Комфорт и стиль.' },
+      { id: 9, name:'Nissan Qashqai', price:600000, image:'https://wieck-nissanao-production.s3.amazonaws.com/photos/3175f20e29f467cc777823e9f17c3b6e6cee0268/preview-928x522.jpg', year: 2020, mileage: '18,000 км', owners: 1, accidents: 'Нет', comment: 'Идеален для города и бездорожья.' },
+      { id: 10, name:'Renault Duster', price:490000, image:'https://upload.wikimedia.org/wikipedia/commons/f/fa/Renault_Duster_1.6_Expression_2017_%2833179734784%29.jpg', year: 2017, mileage: '40,000 км', owners: 2, accidents: 'Да', comment: 'Прошел техобслуживание.' },
+      { id: 11, name:'Subaru Forester', price:650000, image:'https://upload.wikimedia.org/wikipedia/commons/a/a9/2019_Subaru_Forester_2.5i_Touring_AWD_front_3.17.19.jpg', year: 2021, mileage: '12,000 км', owners: 1, accidents: 'Нет', comment: 'Отличное состояние, полный привод.' },
+      { id: 12, name:'Tesla Model 3', price:2500000, image:'https://avatars.mds.yandex.net/get-autoru-vos/1980279/1f1d1656f4e3f4172f8739995580ee98/456x342', year: 2022, mileage: '5,000 км', owners: 1, accidents: 'Нет', comment: 'Электромобиль, инновации будущего.' },
+      { id: 13, name:'Chevrolet Tracker', price:550000, image:'https://s.auto.drom.ru/i24273/r/photos/1433654/big_1628624.jpg', year: 2021, mileage: '8,000 км', owners: 1, accidents: 'Нет', comment: 'Компактный кроссовер с хорошей экономией.' },
+      { id: 14, name:'Peugeot 3008', price:620000, image:'https://avatars.mds.yandex.net/get-autoru-vos/11748220/15f51e696d3d8d447f23a0c5700405b1/1200x900', year: 2023, mileage: '1,000 км', owners: 1, accidents: 'Нет', comment: 'Современный дизайн и технологии.' },
+      { id: 15, name:'Mazda CX-5', price:750000, image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVXRV_b23LJAH5cml-7Tt9TMUBHe3P40cqow&s', year: 2022, mileage: '5,000 км', owners: 1, accidents: 'Нет', comment: 'Спортивный кроссовер с высоким уровнем комфорта.' },
+      { id: 16, name:'Volkswagen Tiguan', price:800000, image:'https://mollerauto.lv/media/catalog/product/cache/9f50a19ae00c847d884be9f7ea7b58f4/b/9/b9cf08cca4ddaf814ce307873448ec3c489139546823a4621062833e3f5a8287.jpeg', year: 2021, mileage: '10,000 км', owners: 1, accidents: 'Нет', comment: 'Надежный и стильный SUV.' },
+    ];
+    localStorage.setItem('cars', JSON.stringify(cars));
+  }
+
+  window.onload = function() {
+      updateAuthUI();
+      applyFilters();
+      updateCartCount();
+  };
+
+  function isAdmin() {
+    return currentUser && currentUser.isAdmin;
+  }
+  function updateAuthUI() {
+    const authInfo = document.getElementById('authInfo');
+    if (currentUser) {
+      authInfo.innerHTML = `
+        <span>Привет, ${currentUser.email}${isAdmin() ? ' (админ)' : ''}</span>
+        <button onclick="logout()">Выйти</button>`;
+    } else {
+      authInfo.innerHTML = `
+        <a href="#" onclick="showAuthModal('login')">Вход</a>
+        <span>|</span>
+        <a href="#" onclick="showAuthModal('register')">Регистрация</a>`;
+    }
+  }
+  function renderCars(carsToRender) {
+    const carList = document.getElementById('carList');
+    carList.innerHTML = '';
+
+    if (carsToRender.length === 0) {
+      carList.innerHTML = '<div class="empty-state"><p>Автомобилей по заданным критериям не найдено</p></div>';
+      return;
+    }
+
+    carsToRender.forEach(car => {
+      const carItem = document.createElement('div');
+      carItem.className = 'car-item';
+      const sellerInfo = car.seller ? `<p style="font-size:0.75rem; color: var(--text-light); margin-top:0.5rem;">Продавец: ${car.seller}</p>` : '';
+
+      carItem.innerHTML = `
+        <img src="${car.image}" alt="${car.name}" class="car-image" loading="lazy"/>
+        <h4>${car.name}</h4>
+        <p class="price">${car.price.toLocaleString()} ₽</p>
+        <div class="car-info">
+          <p><strong>Год:</strong> ${car.year}</p>
+          <p><strong>Пробег:</strong> ${car.mileage}</p>
+          <p><strong>Владельцы:</strong> ${car.owners}</p>
+          <p><strong>ДТП:</strong> ${car.accidents}</p>
+          <p>${car.comment}</p>
+          ${sellerInfo}
+        </div>
+        <button class="add-to-cart-btn" onclick="addToCart(${car.id})">Добавить в корзину</button>
+        ${isAdmin() ? `
+          <button class="add-to-cart-btn" style="background-color: var(--error);" onclick="deleteCar(${car.id})">Удалить</button>
+          <button class="add-to-cart-btn" style="background-color: var(--secondary); color: var(--text);" onclick="editCar(${car.id})">Редактировать</button>
+        ` : ''}
+      `;
+      carList.appendChild(carItem);
+    });
+  }
+
+  function filterCars(cars, brand, year, mileage, owners) {
+    return cars.filter(car => {
+      const carBrand = car.name.split(' ')[0];
+      const carMileage = parseInt(car.mileage.replace(/\D/g, ''));
+
+      return (
+        (brand ? carBrand.toLowerCase() === brand.toLowerCase() : true) &&
+        (year ? car.year >= year : true) &&
+        (mileage ? carMileage <= mileage : true) &&
+        (owners ? car.owners <= owners : true)
+      );
+    });
+  }
+
+  function applyFilters() {
+    const brand = document.getElementById('filterBrand').value;
+    const year = parseInt(document.getElementById('filterYear').value) || null;
+    const mileage = parseInt(document.getElementById('filterMileage').value) || null;
+    const owners = parseInt(document.getElementById('filterOwners').value) || null;
+
+    const filteredCars = filterCars(cars, brand, year, mileage, owners);
+    renderCars(filteredCars);
+  }
+
+  function resetFilters() {
+    document.getElementById('filterBrand').value = '';
+    document.getElementById('filterYear').value = '';
+    document.getElementById('filterMileage').value = '';
+    document.getElementById('filterOwners').value = '';
+    applyFilters();
+  }
+
+  function addToCart(carId) {
+    const car = cars.find(c => c.id === carId);
+    if (!car) return;
+
+    const cartItemIndex = cart.findIndex(item => item.id === carId);
+    if (cartItemIndex !== -1) {
+      cart[cartItemIndex].quantity++;
+    } else {
+      cart.push({...car, quantity: 1});
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    showMessage('Автомобиль добавлен в корзину!', false);
+  }
+
+  function updateCartCount() {
+    const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cartCount').textContent = `Корзина: ${totalCount} ${getNoun(totalCount, 'товар', 'товара', 'товаров')}`;
+  }
+
+  function getNoun(number, one, two, five) {
+    let n = Math.abs(number);
+    n %= 100;
+    if (n >= 5 && n <= 20) return five;
+    n %= 10;
+    if (n === 1) return one;
+    if (n >= 2 && n <= 4) return two;
+    return five;
+  }
+
+  function showAuthModal(type) {
+    document.getElementById('authModal').style.display = 'flex';
+    if (type === 'login') showLoginForm();
+    else showRegisterForm();
+  }
+
+  function closeAuthModal() {
+    document.getElementById('authModal').style.display = 'none';
+    document.getElementById('message').textContent = '';
+  }
+
+  function showLoginForm() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+  }
+
+  function showRegisterForm() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+  }
+
+  function showMessage(text, isError = true) {
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = text;
+    messageEl.style.color = isError ? 'var(--error)' : 'var(--success)';
+    setTimeout(() => { messageEl.textContent = ''; }, 3000);
+  }
+
+  function register(e) {
+    e.preventDefault();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value.trim();
+
+    if (users.some(u => u.email === email)) {
+      showMessage('Пользователь с таким email уже существует!');
+      return false;
+    }
+
+    const isAdminUser = email === 'admin@site.ru';
+    const newUser = { email, password, isAdmin: isAdminUser };
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    showMessage('Регистрация успешна! Теперь войдите.', false);
+    showLoginForm();
+    return false;
+  }
+
+  function login(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    const user = users.find(u => u.email === email);
+    if (!user || user.password !== password) {
+      showMessage('Неверный email или пароль!');
+      return false;
+    }
+
+    currentUser = user;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    closeAuthModal();
+    updateAuthUI();
+    applyFilters();
+    return false;
+  }
+
+  function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    updateAuthUI();
+  }
+
+  function deleteCar(id) {
+    const index = cars.findIndex(c => c.id === id);
+    if (index !== -1) {
+      if (confirm('Вы уверены, что хотите удалить этот автомобиль?')) {
+        cars.splice(index, 1);
+        localStorage.setItem('cars', JSON.stringify(cars));
+        applyFilters();
+        showMessage('Автомобиль удалён.', false);
+      }
+    }
+  }
+
+  function editCar(id) {
+    const car = cars.find(c => c.id === id);
+    if (!car) return;
+
+    document.getElementById('editId').value = car.id;
+    document.getElementById('editName').value = car.name;
+    document.getElementById('editPrice').value = car.price;
+    document.getElementById('editImage').value = car.image;
+    document.getElementById('editYear').value = car.year;
+    document.getElementById('editMileage').value = car.mileage;
+    document.getElementById('editOwners').value = car.owners;
+    document.getElementById('editAccidents').value = car.accidents;
+    document.getElementById('editComment').value = car.comment;
+
+    document.getElementById('editModal').style.display = 'flex';
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  function saveCarEdit(e) {
+    e.preventDefault();
+    const id = parseInt(document.getElementById('editId').value);
+    const car = cars.find(c => c.id === id);
+    if (!car) return;
+
+    car.name = document.getElementById('editName').value;
+    car.price = parseInt(document.getElementById('editPrice').value);
+    car.image = document.getElementById('editImage').value;
+    car.year = parseInt(document.getElementById('editYear').value);
+    car.mileage = document.getElementById('editMileage').value;
+    car.owners = parseInt(document.getElementById('editOwners').value);
+    car.accidents = document.getElementById('editAccidents').value;
+    car.comment = document.getElementById('editComment').value;
+
+    localStorage.setItem('cars', JSON.stringify(cars));
+
+    closeEditModal();
+    applyFilters();
+    showMessage('Информация обновлена.', false);
+    return false;
+  }
+
+  function closeAddModal() {
+    document.getElementById('addModal').style.display = 'none';
+  }
+
+  function clearAddForm() {
+    document.getElementById('addName').value = '';
+    document.getElementById('addImage').value = '';
+    document.getElementById('addYear').value = '';
+    document.getElementById('addMileage').value = '';
+    document.getElementById('addOwners').value = '';
+    document.getElementById('addAccidents').value = '';
+    document.getElementById('addPrice').value = '';
+    document.getElementById('addComment').value = '';
+  }
+
+  function openAddModal() {
+    if (!currentUser) {
+      showMessage('Пожалуйста, войдите в аккаунт, чтобы добавить объявление.');
+      showAuthModal('login');
+      return;
+    }
+    document.getElementById('addModal').style.display = 'flex';
+  }
+
+  function addNewCar(e) {
+    e.preventDefault();
+
+    if (!currentUser) {
+      showMessage('Пожалуйста, войдите в аккаунт, чтобы добавить объявление.');
+      closeAddModal();
+      return false;
+    }
+
+    const name = document.getElementById('addName').value.trim();
+    const image = document.getElementById('addImage').value.trim();
+    const year = parseInt(document.getElementById('addYear').value);
+    const mileage = document.getElementById('addMileage').value.trim();
+    const owners = parseInt(document.getElementById('addOwners').value);
+    const accidents = document.getElementById('addAccidents').value;
+    const price = parseInt(document.getElementById('addPrice').value);
+    const comment = document.getElementById('addComment').value.trim();
+
+    if (!name || !image || !year || !mileage || isNaN(owners) || !accidents || !price) {
+      showMessage('Пожалуйста, заполните все обязательные поля!');
+      return false;
+    }
+
+    const newId = cars.length ? Math.max(...cars.map(c => c.id)) + 1 : 1;
+
+    const newCar = {
+      id: newId,
+      name,
+      image,
+      year,
+      mileage,
+      owners,
+      accidents,
+      price,
+      comment,
+      seller: currentUser.email
+    };
+
+    cars.push(newCar);
+    localStorage.setItem('cars', JSON.stringify(cars));
+
+    closeAddModal();
+    clearAddForm();
+    applyFilters();
+
+    showMessage('Объявление успешно добавлено!', false);
+    return false;
+  }
+</script>
+</body>
+</html>
